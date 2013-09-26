@@ -31,6 +31,9 @@ make %{?jobs:-j%jobs}
 %install
 %make_install
 
+mkdir -p %{buildroot}/usr/share/license
+cp LICENSE %{buildroot}/usr/share/license/%{name}
+
 %post -p /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -40,6 +43,7 @@ make %{?jobs:-j%jobs}
 %manifest bundle.manifest
 %defattr(-,root,root,-)
 %{_libdir}/libbundle.so.*
+/usr/share/license/%{name}
 
 
 %files devel
