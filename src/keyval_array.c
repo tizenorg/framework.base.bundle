@@ -34,7 +34,6 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 
 
 static keyval_method_collection_t method = {
@@ -54,7 +53,7 @@ keyval_array_new(keyval_array_t *kva, const char *key, const int type, const voi
 	if(!kva) {
 		kva = calloc(1, sizeof(keyval_array_t));
 		if(unlikely(NULL==kva)) {
-			errno = ENOMEM;
+			set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 			return NULL;
 		}
 	}
@@ -63,7 +62,7 @@ keyval_array_new(keyval_array_t *kva, const char *key, const int type, const voi
 	keyval_t *kv = keyval_new((keyval_t *)kva, key, type, NULL, 0);
 	if(unlikely(NULL==kv))
 	{
-			errno = ENOMEM;
+			set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 			return NULL;
 	}
 
@@ -73,20 +72,20 @@ keyval_array_new(keyval_array_t *kva, const char *key, const int type, const voi
 
 	// Set array value, if exist
 	if(kva->array_val) {
-		errno=EINVAL;
+		set_last_result(BUNDLE_ERROR_INVALID_PARAMETER);
 		if(must_free_obj) keyval_array_free(kva, 1);
 		return NULL;
 	}
 	kva->array_val = calloc(len, sizeof(void *));
 	if(!(kva->array_val)) {
-		errno = ENOMEM;
+		set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 		keyval_array_free(kva, 1);
 		return NULL;
 	}
 	// array_element_size
 	kva->array_element_size = calloc(len, sizeof(size_t));
 	if(!(kva->array_element_size)) {
-		errno = ENOMEM;
+		set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 		keyval_array_free(kva, 1);
 		return NULL;
 	}
@@ -168,7 +167,7 @@ keyval_array_copy_array(keyval_array_t *kva, void **array_val, unsigned int arra
 	for(i=0; i < array_len; i++) {
 		kva->array_val[i] = malloc(measure_size(array_val[i]));
 		if(!(kva->array_val[i])) {
-			errno = ENOMEM;
+			set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 			goto cleanup_exit;
 		}
 		memcpy(kva->array_val[i], array_val[i], measure_size(array_val[i]));
@@ -205,16 +204,14 @@ keyval_array_set_element(keyval_array_t *kva, int idx, void *val, size_t size)
 		}
 		else {
 			// Error case!
-			errno = EINVAL;
-			return -1;
+			return BUNDLE_ERROR_INVALID_PARAMETER;
 		}
 	}
 	else {
 		// Normal case. Copy value into the array.
 		kva->array_val[idx] = malloc(size);
 		if(!(kva->array_val[idx])) {
-			errno = ENOMEM;
-			return -1;
+			return BUNDLE_ERROR_OUT_OF_MEMORY;
 		}
 		if(val) {
 			memcpy(kva->array_val[idx], val, size);	// val
@@ -222,16 +219,18 @@ keyval_array_set_element(keyval_array_t *kva, int idx, void *val, size_t size)
 		}
 	}
 
-	return 0;
+	return BUNDLE_ERROR_NONE;
 }
 
 int
 keyval_array_get_data(keyval_array_t *kva, int *type,
 		void ***array_val, unsigned int *len, size_t **array_element_size)
 {
-	if(!kva) return -EINVAL;
+	if(!kva)
+		return BUNDLE_ERROR_INVALID_PARAMETER;
 	keyval_t *kv = (keyval_t *)kva;
-	if(!keyval_type_is_array(kv->type)) return -EINVAL;
+	if(!keyval_type_is_array(kv->type))
+		return BUNDLE_ERROR_INVALID_PARAMETER;
 	
 	// Return values
 	if(type) *type = kv->type;
@@ -239,7 +238,7 @@ keyval_array_get_data(keyval_array_t *kva, int *type,
 	if(len) *len = kva->len;
 	if(array_element_size) *array_element_size = kva->array_element_size;
 
-	return 0;
+	return BUNDLE_ERROR_NONE;
 }
 
 size_t

@@ -19,8 +19,8 @@
 #define __TIZEN_CORE_LIB_BUNDLE_DOC_H__
 
 /**
- * @ingroup CORE_LIB_GROUP
- * @defgroup CORE_LIB_BUNDLE_MODULE
+ * @ingroup CAPI_APPLICATION_FRAMEWORK
+ * @defgroup CORE_LIB_BUNDLE_MODULE Bundle
  * @brief  A simple string-based dictionary ADT.
  *
  * @section CORE_LIB_BUNDLE_MODULE_HEADER Required Header

@@ -1,6 +1,6 @@
 Name:       bundle
 Summary:    String key-val dictionary ADT
-Version:    0.1.32
+Version:    0.1.35
 Release:    1
 Group:      System/Libraries
 License:    Apache License, Version 2.0
@@ -10,6 +10,7 @@ Requires(postun): /sbin/ldconfig
 BuildRequires:  cmake
 BuildRequires:  pkgconfig(glib-2.0)
 BuildRequires:  pkgconfig(dlog)
+BuildRequires:  pkgconfig(capi-base-common)
 
 %description
 Simple string key-val dictionary ADT
@@ -26,6 +27,7 @@ Simple string key-val dictionary ADT (devel)
 %setup -q -n %{name}-%{version}
 
 %build
+export CFLAGS="$CFLAGS -Wall -Werror -Wno-unused-function"
 cmake . -DCMAKE_INSTALL_PREFIX=%{_prefix}
 
 make %{?jobs:-j%jobs}

@@ -29,9 +29,8 @@
 #include "keyval_type.h"
 #include "keyval.h"
 #include "bundle_log.h"
+#include "bundle.h"
 #include <stdlib.h>
-#include <errno.h>
-extern int errno;
 
 static keyval_method_collection_t method = {
 	keyval_free,
@@ -47,10 +46,10 @@ keyval_new(keyval_t *kv, const char *key, const int type, const void *val, const
 	int must_free_obj;
 	must_free_obj = kv ? 0 : 1;
 
-	if(!kv) {	
+	if(!kv) {
 		kv = calloc(1, sizeof(keyval_t));
 		if(!kv) {
-			//errno = ENOMEM;	// set by calloc
+			set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 			return NULL;
 		}
 	}
@@ -62,7 +61,7 @@ keyval_new(keyval_t *kv, const char *key, const int type, const void *val, const
 	}
 	kv->key = strdup(key);
 	if(!kv->key) {
-		//errno = ENOMEM;	// set by strdup
+		set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 		keyval_free(kv, must_free_obj);
 		return NULL;
 	}
@@ -70,11 +69,11 @@ keyval_new(keyval_t *kv, const char *key, const int type, const void *val, const
 	// elementa of primitive types
 	kv->type = type;
 	kv->size = size;
-	
+
 	if(size) {
 		kv->val = calloc(1, size);		// allocate memory unconditionally !
 		if(!kv->val) {
-			errno = ENOMEM;
+			set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
 			keyval_free(kv, 1);
 			return NULL;
 		}
@@ -114,8 +113,10 @@ keyval_free(keyval_t *kv, int do_free_object)
 int
 keyval_get_data(keyval_t *kv, int *type, void **val, size_t *size)
 {
-	if(!kv) return -EINVAL;
-	if(keyval_type_is_array(kv->type)) return -EINVAL;
+	if(!kv)
+		return BUNDLE_ERROR_INVALID_PARAMETER;
+	if(keyval_type_is_array(kv->type))
+		return BUNDLE_ERROR_INVALID_PARAMETER;
 
 	if(type) *type = kv->type;
 	if(val) *val = kv->val;
