@@ -8,3 +8,5 @@
 /unit/utc_ApplicationFW_bundle_iterate_func
 /unit/utc_ApplicationFW_bundle_encode_func
 /unit/utc_ApplicationFW_bundle_decode_func
+/unit/utc_ApplicationFW_bundle_export_to_argv_func
+/unit/utc_ApplicationFW_bundle_import_from_argv_func

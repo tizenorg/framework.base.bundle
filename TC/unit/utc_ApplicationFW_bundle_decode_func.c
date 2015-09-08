@@ -72,6 +72,10 @@ static void utc_ApplicationFW_bundle_decode_func_01(void)
 	}
 	
 	r = bundle_encode(b, &raw, &len);
+	if(BUNDLE_ERROR_NONE != r){
+		tet_result(TET_FAIL);
+		goto cleanup;
+	}
 	if(NULL == raw) {
 		tet_result(TET_UNINITIATED);
 		goto cleanup;

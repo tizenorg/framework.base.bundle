@@ -354,7 +354,8 @@ int TC_bundle_export_to_argv_invalid()
 	char **argv1=NULL;
 
 /*CASE1:INVALID b= null,FIXED : segmentation fault in(put check for bundle=null) bundle_foreach (b=0x0, iter=0x4001322c <_iter_export_to_argv>, user_data=0xbead0a24)*/	
-	argc1=bundle_export_to_argv(b_null,&argv1);	
+	argc1 = bundle_export_to_argv(b_null,&argv1);
+	assert( argc1 >= 0);
 	return SUCCESS;
 
 }

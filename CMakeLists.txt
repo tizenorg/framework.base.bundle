@@ -14,13 +14,14 @@ FOREACH(flag ${pkgs_CFLAGS})
 	SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")
 ENDFOREACH(flag)
 
+set(EXTRA_CFLAGS "${EXTRA_CFLAGS} -fvisibility=hidden")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
 
 ### Local include directories
 include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/src)
 
 ### Build
-add_library(bundle SHARED 
+add_library(bundle SHARED
 		src/bundle.c
 		src/keyval_type.c
 		src/keyval.c
@@ -40,12 +41,12 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/bundle.pc.in ${CMAKE_BINARY_DIR}/bundle.pc @O
 install(TARGETS bundle
 	DESTINATION lib
 	)
-install(FILES 
-	${CMAKE_SOURCE_DIR}/include/bundle.h 
-	${CMAKE_SOURCE_DIR}/include/SLP_bundle_PG.h 
+install(FILES
+	${CMAKE_SOURCE_DIR}/include/bundle.h
+	${CMAKE_SOURCE_DIR}/include/SLP_bundle_PG.h
 	DESTINATION include/
 		)
-install(FILES ${CMAKE_BINARY_DIR}/bundle.pc 
+install(FILES ${CMAKE_BINARY_DIR}/bundle.pc
 		DESTINATION lib/pkgconfig/
 		)
 

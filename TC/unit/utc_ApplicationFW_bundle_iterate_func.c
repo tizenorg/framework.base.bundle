@@ -64,8 +64,6 @@ cb_test(const char *k, const char *v, void *data)
  */
 static void utc_ApplicationFW_bundle_iterate_func_01(void)
 {
-	int r = 0;
-
 	bundle *b = bundle_create();
 	if(!b) {
 		tet_result(TET_UNINITIATED);
