@@ -27,6 +27,7 @@
  */
 
 #include "bundle.h"
+#include "bundle_internal.h"
 #include "keyval.h"
 #include "keyval_array.h"
 #include "keyval_type.h"
@@ -103,6 +104,7 @@ _bundle_add_kv(bundle *b, const char *key, const void *val, const size_t size, c
 	if(kv) {	/* Key already exists */
 		return BUNDLE_ERROR_KEY_EXISTS;
 	}
+	set_last_result(BUNDLE_ERROR_NONE);
 
 	keyval_t *new_kv = NULL;
 	if(keyval_type_is_array(type)) {
@@ -547,7 +549,6 @@ bundle_decode(const bundle_raw *r, const int data_size)
 	/*compare checksum values- extracted from the received string and computed from the data */
 	if(strcmp(extract_cksum,compute_cksum)!=0)
 	{
-		set_last_result(BUNDLE_ERROR_INVALID_PARAMETER);
 		free(d_str);
 		free(extract_cksum);
 		g_free(compute_cksum);
@@ -558,14 +559,6 @@ bundle_decode(const bundle_raw *r, const int data_size)
 
 	/* re-construct bundle */
 	b = bundle_create();
-	if (b == NULL)
-	{
-		free(d_str);
-		free(extract_cksum);
-		g_free(compute_cksum);
-		set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
-		return NULL;
-	}
 
 	p_r = (bundle_raw *)d_r;
 
@@ -707,13 +700,6 @@ bundle_decode_raw(const bundle_raw *r, const int data_size)
 
 	/* re-construct bundle */
 	b = bundle_create();
-	if (b == NULL)
-	{
-		free(extract_cksum);
-		g_free(compute_cksum);
-		set_last_result(BUNDLE_ERROR_OUT_OF_MEMORY);
-		return NULL;
-	}
 
 	p_r = (bundle_raw *)d_r;
 
@@ -825,7 +811,6 @@ int bundle_free_exported_argv(int argc, char ***argv)
 	return BUNDLE_ERROR_NONE;
 }
 
-
 bundle * bundle_import_from_argv(int argc, char **argv)
 {
 	if(!argv) {
@@ -853,7 +838,6 @@ bundle * bundle_import_from_argv(int argc, char **argv)
 		}
 		return b;
 	}
-
 	/*BUNDLE_LOG_PRINT("\nit is encoded");*/
 	int idx, type;
 	keyval_t *kv = NULL;

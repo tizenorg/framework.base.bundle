@@ -52,6 +52,6 @@ cp LICENSE %{buildroot}/usr/share/license/%{name}
 %files devel
 %defattr(-,root,root,-)
 %{_includedir}/bundle.h
-%{_includedir}/SLP_bundle_PG.h
+%{_includedir}/bundle_internal.h
 %{_libdir}/pkgconfig/bundle.pc
 %{_libdir}/libbundle.so

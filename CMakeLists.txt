@@ -9,10 +9,11 @@ message(STATUS "Version from debian/changelog: ${VERSION},  Major version: ${VER
 
 ### Required packages
 INCLUDE(FindPkgConfig)
-pkg_check_modules(pkgs REQUIRED glib-2.0 dlog)
+pkg_check_modules(pkgs REQUIRED glib-2.0 dlog capi-base-common)
 FOREACH(flag ${pkgs_CFLAGS})
 	SET(EXTRA_CFLAGS "${EXTRA_CFLAGS} ${flag}")
 ENDFOREACH(flag)
+SET(pc_requires "capi-base-common")
 
 set(EXTRA_CFLAGS "${EXTRA_CFLAGS} -fvisibility=hidden")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${EXTRA_CFLAGS}")
@@ -34,6 +35,7 @@ target_link_libraries(bundle ${pkgs_LDFLAGS})
 
 ### Make pkgconfig file
 SET(PREFIX ${CMAKE_INSTALL_PREFIX})
+SET(PC_REQUIRED ${pc_requires})
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/bundle.pc.in ${CMAKE_BINARY_DIR}/bundle.pc @ONLY)
 
 
@@ -43,7 +45,7 @@ install(TARGETS bundle
 	)
 install(FILES
 	${CMAKE_SOURCE_DIR}/include/bundle.h
-	${CMAKE_SOURCE_DIR}/include/SLP_bundle_PG.h
+	${CMAKE_SOURCE_DIR}/include/bundle_internal.h
 	DESTINATION include/
 		)
 install(FILES ${CMAKE_BINARY_DIR}/bundle.pc
